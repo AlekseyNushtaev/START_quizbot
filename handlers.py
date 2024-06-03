@@ -70,22 +70,22 @@ async def process_start(msg: Message, state: FSMContext):
     async with (Session() as session):
         query = select(User.user_id).where(User.user_id == str(msg.from_user.id))
         results = await session.execute(query)
-        #if not results.scalar():
-        stmt = insert(User).values(
-            user_id=str(msg.from_user.id),
-            username=msg.from_user.username,
-            first_name=msg.from_user.first_name,
-            last_name=msg.from_user.last_name,
-            state="Активен",
-            time_start=datetime.now()
-        )
-        await session.execute(stmt)
-        await session.commit()
-        await msg.answer(text="Привет! Это компания Старт!\n\nПожалуйста, напишите Ваше ФИО.\n\n"
-                              "Пример: Иванов Иван Иванович")
-        await state.set_state(FSMFillForm.fill_name)
-        # else:
-        #     await msg.answer(text="Вы уже участвуете в розыгрыше. Ждите результатов - мы сообщим.")
+        if not results.scalar():
+            stmt = insert(User).values(
+                user_id=str(msg.from_user.id),
+                username=msg.from_user.username,
+                first_name=msg.from_user.first_name,
+                last_name=msg.from_user.last_name,
+                state="Активен",
+                time_start=datetime.now()
+            )
+            await session.execute(stmt)
+            await session.commit()
+            await msg.answer(text="Привет! Это компания Старт!\n\nПожалуйста, напишите Ваше ФИО.\n\n"
+                                  "Пример: Иванов Иван Иванович")
+            await state.set_state(FSMFillForm.fill_name)
+        else:
+            await msg.answer(text="Вы уже участвуете в розыгрыше. Ждите результатов - мы сообщим.")
 
 
 @router.message(
