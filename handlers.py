@@ -118,22 +118,18 @@ async def process_contract_sent(msg: Message, state: FSMContext):
         await session.execute(stmt)
         await session.commit()
     await msg.answer(
-        text='Спасибо!\n\nТеперь, пожалуйста, укажите ваш ник на YouTube.\n\n'
-             'Справка для поиска ника в YouTube:\n\n'
-             '1. Откройте YouTube:\n'
-             '- Перейдите на сайт [YouTube](https://www.youtube.com) или откройте приложение YouTube на вашем устройстве.\n\n'
-             '2. Войдите в свой аккаунт:\n'
-             '- Если вы еще не вошли в свой аккаунт, нажмите на кнопку "Войти" в правом верхнем углу экрана и введите свои учетные данные.\n\n'
-             '3. Перейдите в раздел "Вы":\n'
-             '- Нажмите на иконку вашего профиля в правом верхнем углу экрана. Это может быть ваша фотография или первая буква вашего имени.\n\n'
-             '4. Откройте ваш канал:\n'
-             '- В выпадающем меню выберите "Ваш канал". Это перенаправит вас на страницу вашего канала.\n\n'
-             '5. Найдите ваш ник:\n'
-             '- На странице вашего канала, под вашим именем, вы увидите ваш ник (псевдоним). Он будет отображаться как часть URL вашего канала или рядом с вашим именем.\n\n'
-             'Пример ника: user-gj8yn1hq9v\n\n'
-             'Если у вас возникли трудности или дополнительные вопросы, пожалуйста, дайте знать!'
+        text='Спасибо!\n\n'
+             'Теперь, пожалуйста, укажите ссылку на Вашу страницу в ВКонтакте.\n\n'
+             'Справка для поиска ссылки страницы в Вконтакте:\n\n'
+             '1. Откройте браузер и перейдите на сайт ВКонтакте (vk.com) или откройте приложение.\n'
+             '2. Войдите в свой аккаунт, если вы еще этого не сделали.\n'
+             '3. Перейдите на свою страницу профиля. Для этого нажмите на свое имя или аватар в '
+             'верхнем правом углу экрана.\n'
+             '4. В адресной строке браузера вы увидите URL-адрес вашей страницы.\n\n'
+             'Он будет выглядеть примерно так: `https://vk.com/id123456789` или `https://vk.com/yourusername`.\n'
+             '5. Скопируйте ссылку и отправьте её мне'
     )
-    await state.set_state(FSMFillForm.fill_tube)
+    await state.set_state(FSMFillForm.fill_vk)
 
 
 @router.message(StateFilter(FSMFillForm.fill_contract))
@@ -143,45 +139,45 @@ async def process_contract_wrong(msg: Message):
                           'Пожалуйста введите повторно номер договора')
 
 
-@router.message(StateFilter(FSMFillForm.fill_tube), F.text)
-async def process_youtube_sent(msg: Message, state: FSMContext):
-    async with (Session() as session):
-        stmt = update(User).where(User.user_id == str(msg.from_user.id)).values(tube_nick=msg.text,
-                                                                                time_tube=datetime.now())
-        await session.execute(stmt)
-        await session.commit()
-    await msg.answer(text='Спасибо!\n\n'
-                          'Теперь, пожалуйста, укажите ссылку на Вашу страницу в ВКонтакте.\n\n'
-                          'Справка для поиска ссылки страницы в Вконтакте:\n\n'
-                          '1. Откройте браузер и перейдите на сайт ВКонтакте (vk.com) или откройте приложение.\n'
-                          '2. Войдите в свой аккаунт, если вы еще этого не сделали.\n'
-                          '3. Перейдите на свою страницу профиля. Для этого нажмите на свое имя или аватар в '
-                          'верхнем правом углу экрана.\n'
-                          '4. В адресной строке браузера вы увидите URL-адрес вашей страницы.\n\n'
-                          'Он будет выглядеть примерно так: `https://vk.com/id123456789` или `https://vk.com/yourusername`.\n'
-                          '5. Скопируйте ссылку и отправьте её мне')
-    await state.set_state(FSMFillForm.fill_vk)
+# @router.message(StateFilter(FSMFillForm.fill_tube), F.text)
+# async def process_youtube_sent(msg: Message, state: FSMContext):
+#     async with (Session() as session):
+#         stmt = update(User).where(User.user_id == str(msg.from_user.id)).values(tube_nick=msg.text,
+#                                                                                 time_tube=datetime.now())
+#         await session.execute(stmt)
+#         await session.commit()
+#     await msg.answer(text='Спасибо!\n\n'
+#                           'Теперь, пожалуйста, укажите ссылку на Вашу страницу в ВКонтакте.\n\n'
+#                           'Справка для поиска ссылки страницы в Вконтакте:\n\n'
+#                           '1. Откройте браузер и перейдите на сайт ВКонтакте (vk.com) или откройте приложение.\n'
+#                           '2. Войдите в свой аккаунт, если вы еще этого не сделали.\n'
+#                           '3. Перейдите на свою страницу профиля. Для этого нажмите на свое имя или аватар в '
+#                           'верхнем правом углу экрана.\n'
+#                           '4. В адресной строке браузера вы увидите URL-адрес вашей страницы.\n\n'
+#                           'Он будет выглядеть примерно так: `https://vk.com/id123456789` или `https://vk.com/yourusername`.\n'
+#                           '5. Скопируйте ссылку и отправьте её мне')
+#     await state.set_state(FSMFillForm.fill_vk)
 
 
-@router.message(StateFilter(FSMFillForm.fill_tube))
-async def process_youtube_wrong(msg: Message):
-    await msg.answer(
-        text='Что-то пошло не так\n\n'
-             'Напишите ник YouTube в текстовом сообщении\n\n'
-             'Справка для поиска ника в Youtube\n\n'
-             '1. Откройте YouTube:\n'
-             '- Перейдите на сайт [YouTube](https://www.youtube.com) или откройте приложение YouTube на вашем устройстве.\n\n'
-             '2. Войдите в свой аккаунт:\n'
-             '- Если вы еще не вошли в свой аккаунт, нажмите на кнопку "Войти" в правом верхнем углу экрана и введите свои учетные данные.\n\n'
-             '3. Перейдите в раздел "Вы":\n'
-             '- Нажмите на иконку вашего профиля в правом верхнем углу экрана. Это может быть ваша фотография или первая буква вашего имени.\n\n'
-             '4. Откройте ваш канал:\n'
-             '- В выпадающем меню выберите "Ваш канал". Это перенаправит вас на страницу вашего канала.\n\n'
-             '5. Найдите ваш ник:\n'
-             '- На странице вашего канала, под вашим именем, вы увидите ваш ник (псевдоним). Он будет отображаться как часть URL вашего канала или рядом с вашим именем.\n\n'
-             'Пример ника: user-gj8yn1hq9v\n\n'
-             'Если у вас возникли трудности или дополнительные вопросы, пожалуйста, дайте знать!'
-    )
+# @router.message(StateFilter(FSMFillForm.fill_tube))
+# async def process_youtube_wrong(msg: Message):
+#     await msg.answer(
+#         text='Что-то пошло не так\n\n'
+#              'Напишите ник YouTube в текстовом сообщении\n\n'
+#              'Справка для поиска ника в Youtube\n\n'
+#              '1. Откройте YouTube:\n'
+#              '- Перейдите на сайт [YouTube](https://www.youtube.com) или откройте приложение YouTube на вашем устройстве.\n\n'
+#              '2. Войдите в свой аккаунт:\n'
+#              '- Если вы еще не вошли в свой аккаунт, нажмите на кнопку "Войти" в правом верхнем углу экрана и введите свои учетные данные.\n\n'
+#              '3. Перейдите в раздел "Вы":\n'
+#              '- Нажмите на иконку вашего профиля в правом верхнем углу экрана. Это может быть ваша фотография или первая буква вашего имени.\n\n'
+#              '4. Откройте ваш канал:\n'
+#              '- В выпадающем меню выберите "Ваш канал". Это перенаправит вас на страницу вашего канала.\n\n'
+#              '5. Найдите ваш ник:\n'
+#              '- На странице вашего канала, под вашим именем, вы увидите ваш ник (псевдоним). Он будет отображаться как часть URL вашего канала или рядом с вашим именем.\n\n'
+#              'Пример ника: user-gj8yn1hq9v\n\n'
+#              'Если у вас возникли трудности или дополнительные вопросы, пожалуйста, дайте знать!'
+#     )
 
 
 @router.message(StateFilter(FSMFillForm.fill_vk), F.text)
@@ -191,21 +187,12 @@ async def process_vk_sent(msg: Message, state: FSMContext):
                                                                                 time_vk=datetime.now())
         await session.execute(stmt)
         await session.commit()
-    await msg.answer(text='Отлично!\n\nПожалуйста, загрузите видео.\n\n'
-                          'Требования к видео:\n\n'
-                          '- Рассказ о вашей ситуации.\n\n'
-                          'Видеоролик не должен содержать:\n\n'
-                          '- Ненормативную лексику (мат, оскорбления)\n'
-                          '- Непристойное поведение\n'
-                          '- Распитие спиртных напитков\n'
-                          '- Курение\n'
-                          '- Употребление наркотических веществ\n'
-                          '- Людей в состоянии алкогольного/наркотического опьянения\n'
-                          '- Политические лозунги\n'
-                          '- Призывы к терроризму/экстремизму\n'
-                          '- Порнографические материалы'
-                     )
-    await state.set_state(FSMFillForm.fill_video)
+        query = select(User.id).where(User.user_id == str(msg.from_user.id))
+        res = await session.execute(query)
+    await msg.answer(text=f'Спасибо за предоставленные ответы!\n\nВаш уникальный номер - {res.first()[0]}!\n'
+                          f'Желаю удачи в розыгрыше!\n\n'
+                          f'Если у вас возникли трудности или дополнительные вопросы, пожалуйста, дайте знать!')
+    await state.set_state(default_state)
 
 
 @router.message(StateFilter(FSMFillForm.fill_vk))
@@ -223,43 +210,43 @@ async def process_vk_wrong(msg: Message):
                      )
 
 
-@router.message(StateFilter(FSMFillForm.fill_video), F.video)
-async def process_video_sent(msg: Message, state: FSMContext):
-    async with (Session() as session):
-        stmt = update(User).where(User.user_id == str(msg.from_user.id)).values(video=msg.video.file_id,
-                                                                                time_video=datetime.now())
-        await session.execute(stmt)
-        await session.commit()
-        query = select(User.id).where(User.user_id == str(msg.from_user.id))
-        res = await session.execute(query)
-    await msg.answer(text=f'Спасибо за предоставленные ответы!\n\nВаш уникальный номер - {res.first()[0]}!\n'
-                          f'Желаю удачи в розыгрыше!\n\n'
-                          f'Если у вас возникли трудности или дополнительные вопросы, пожалуйста, дайте знать!')
-    await state.set_state(default_state)
-
-
-@router.message(StateFilter(FSMFillForm.fill_video))
-async def process_video_file(msg: Message):
-    await msg.answer(text='Что-то пошло не так\n\n'
-                          'Пришлите пжл сообщение в формате видео\n\n'
-                          'Требования к видео:\n\n'
-                          '- Рассказ о вашей ситуации.\n\n'
-                          'Видеоролик не должен содержать:\n\n'
-                          '- Ненормативную лексику (мат, оскорбления)\n'
-                          '- Непристойное поведение\n'
-                          '- Распитие спиртных напитков\n'
-                          '- Курение\n'
-                          '- Употребление наркотических веществ\n'
-                          '- Людей в состоянии алкогольного/наркотического опьянения\n'
-                          '- Политические лозунги\n'
-                          '- Призывы к терроризму/экстремизму\n'
-                          '- Порнографические материалы'
-                     )
+# @router.message(StateFilter(FSMFillForm.fill_video), F.video)
+# async def process_video_sent(msg: Message, state: FSMContext):
+#     async with (Session() as session):
+#         stmt = update(User).where(User.user_id == str(msg.from_user.id)).values(video=msg.video.file_id,
+#                                                                                 time_video=datetime.now())
+#         await session.execute(stmt)
+#         await session.commit()
+#         query = select(User.id).where(User.user_id == str(msg.from_user.id))
+#         res = await session.execute(query)
+#     await msg.answer(text=f'Спасибо за предоставленные ответы!\n\nВаш уникальный номер - {res.first()[0]}!\n'
+#                           f'Желаю удачи в розыгрыше!\n\n'
+#                           f'Если у вас возникли трудности или дополнительные вопросы, пожалуйста, дайте знать!')
+#     await state.set_state(default_state)
+#
+#
+# @router.message(StateFilter(FSMFillForm.fill_video))
+# async def process_video_file(msg: Message):
+#     await msg.answer(text='Что-то пошло не так\n\n'
+#                           'Пришлите пжл сообщение в формате видео\n\n'
+#                           'Требования к видео:\n\n'
+#                           '- Рассказ о вашей ситуации.\n\n'
+#                           'Видеоролик не должен содержать:\n\n'
+#                           '- Ненормативную лексику (мат, оскорбления)\n'
+#                           '- Непристойное поведение\n'
+#                           '- Распитие спиртных напитков\n'
+#                           '- Курение\n'
+#                           '- Употребление наркотических веществ\n'
+#                           '- Людей в состоянии алкогольного/наркотического опьянения\n'
+#                           '- Политические лозунги\n'
+#                           '- Призывы к терроризму/экстремизму\n'
+#                           '- Порнографические материалы'
+#                      )
 
 
 @router.message(CommandStart(), F.from_user.id.in_(ADMIN_IDS))
 async def process_start_admin(mes: Message):
-    await mes.answer(text="Вы админ бота, для загрузки видео клиента введите пжл уникальный номер юзера.\n\n"
+    await mes.answer(text="Вы админ бота.\n\n"
                           "Данные юзеров доступны <a href='https://docs.google.com/spreadsheets/d/"
                           "1EJpnscQbDO7_zaWeFcj3bKhntON4W0uK3H5cGo9QTYI/edit#gid=0'>по ссылке</a>",
                      disable_web_page_preview=True,
